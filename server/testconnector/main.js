@@ -7,9 +7,10 @@ var wallet;
 
 //ioClient.emit('send-transaction', "aca87f51685ee3bbbf74c22ba08dbb31d187b46bf9cabe252e7b4e4fe0aaedb0", "380ab9f9-6dfe-48c1-b57e-c9d788dddd6c", 4)
 //ioClient.emit('create-wallet', "password1")
-ioClient.emit('get-balance', '9b6a2029-24d1-4336-804c-bd6ee919156e')
+//ioClient.emit('get-balance', '9b6a2029-24d1-4336-804c-bd6ee919156e')
+ioClient.emit('safe-shutdown', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355')
 ioClient.on('get-balance-result', (x,y) => {
-    console.log('Get Balce Result for '+x+' is '+y)
+    console.log('Get Balance Result for '+x+' is '+y)
 })
 
 ioClient.on('transaction-success', (x) => {

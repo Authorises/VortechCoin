@@ -10,10 +10,30 @@ const datadir = 'data/'
 
 let wallets = new Map();
 let walletKeys = new Map()
+let shutdownKeys = ["49adbb0d68402a780532a1b1d146f701deba01fbef5d0e16736e1ed99a523ddd", "a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355", "6029a06d0d48a9f27372f44f6945c782abf61748198cbb9059b41aa5de325927"]
 
 function loadData(){
-    fs.read
+    try {
+        const data = fs.readFileSync(datadir+'wallets.txt', 'utf8')
+        x = JSON.parse(data)
+        for(var value in x){
+            wallets.set(value, x[value])
+        }
+      } catch (err) {
+        console.error(err)
+      }  
+      try {
+        const data = fs.readFileSync(datadir+'walletkeys.txt', 'utf8')
+        x = JSON.parse(data)
+        for(var value in x){
+            walletKeys.set(value, x[value])
+        }
+      } catch (err) {
+        console.error(err)
+      }  
 }
+
+loadData()
 
 function saveData(){
     let walletsJ = {};  
@@ -57,7 +77,7 @@ class Wallet {
     setBalance(balance) {
         this.balance = balance;
     }
-    send(receiver /** This is a UUID */, amount) {
+    send(receiver, amount) {
         if(amount > this.balance){
             return false;
         }else{
@@ -114,6 +134,19 @@ server.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.info(`Client gone [id=${socket.id}]`);
     });
+
+    // These are all the dev/staff type listeners
+
+    socket.on('safe-shutdown', (key) => {
+        if(shutdownKeys.indexOf(key) >= 0){
+            console.log('Safe Shutdown!')
+        }else{
+            socket.emit('error', 'Server Shutdown', 'Provided Authentication Key does not match server Authentication Keys.')
+        }
+    })
+
+    // These are all the client/customer type listeners
+
     socket.on('get-balance', (user) => {
         if(wallets.has(user)){
             socket.emit('get-balance-result', user, wallets.get(user).balance)
