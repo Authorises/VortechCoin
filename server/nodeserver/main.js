@@ -4,10 +4,42 @@ const server = new Server(20183);
 const {v4: uuidv4} = require('uuid');
 const crypto = require('crypto');
 const { randomInt, randomBytes } = require("crypto");
-const e = require("cors");
+const fs = require('fs')
+
+const datadir = 'data/'
 
 let wallets = new Map();
 let walletKeys = new Map()
+
+function loadData(){
+    fs.read
+}
+
+function saveData(){
+    let walletsJ = {};  
+    wallets.forEach((value, key) => {  
+        walletsJ[key] = value  
+    });  
+    fs.writeFile(datadir+'wallets.txt', JSON.stringify(walletsJ), err => {
+        if (err) {
+            console.error(err);
+            return
+        }
+        console.log('Written wallets.txt');
+    })
+
+    let walletKeysJ = {};  
+    walletKeys.forEach((value, key) => {  
+        walletKeysJ[key] = value  
+    });  
+    fs.writeFile(datadir+'walletkeys.txt', JSON.stringify(walletKeysJ), err => {
+        if (err) {
+            console.error(err);
+            return
+        }
+        console.log('Written walletkeys.txt');
+    })
+}
 
 class Wallet {
     constructor(password) {
@@ -57,27 +89,7 @@ class Transaction{
 }
 
 a = new Wallet("password1")
-
 console.log(walletKeys)
-/** 
-a.setBalance(10)
-b = new Wallet("password1")
-c = new Wallet("password1")
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-a.send(b.uuid, 1)
-console.log(a.transactions)
-console.log(b.transactions)
-// console.log("Server Started (20183)")
-*/
 function stressTest(difficulty){
     var saccount = new Wallet("Test")
     var x = difficulty*1000
@@ -93,8 +105,9 @@ function stressTest(difficulty){
         }
     }
 }
-stressTest(100);
-console.log('Done')
+//stressTest(100);
+//console.log('Done')
+
 server.on("connection", (socket) => {
     socket.emit('devdata', a)
     console.info(`Client connected [id=${socket.id}]`);
@@ -103,7 +116,7 @@ server.on("connection", (socket) => {
     });
     socket.on('get-balance', (user) => {
         if(wallets.has(user)){
-            socket.emit('get-balance-result', wallets.get(user).balance)
+            socket.emit('get-balance-result', user, wallets.get(user).balance)
         }else{
             socket.emit('error', 'Getting the balance of a user', 'That UUID does not exist.')
         }
@@ -135,3 +148,4 @@ server.on("connection", (socket) => {
         }
     });
 });
+saveData()
