@@ -1,2 +1,2 @@
 echo "Starting Server"
-node main.js
+node .
