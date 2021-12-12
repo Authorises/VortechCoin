@@ -137,9 +137,16 @@ server.on("connection", (socket) => {
 
     // These are all the dev/staff type listeners
 
-    socket.on('safe-shutdown', (key) => {
+    socket.on('safe-shutdown', (key, reason) => {
         if(shutdownKeys.indexOf(key) >= 0){
+            socket.emit('server-shutdown', 'started')
             console.log('Safe Shutdown!')
+            socket.emit('server-shutdown', 'saving-data')
+            saveData()
+            socket.emit('server-shutdown', 'data-saved')
+            console.log('Now Shutting down Node Server')
+            socket.broadcast.emit('net-shutdown', reason)
+            exit(0);
         }else{
             socket.emit('error', 'Server Shutdown', 'Provided Authentication Key does not match server Authentication Keys.')
         }
