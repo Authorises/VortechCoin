@@ -1,0 +1,19 @@
+{
+  "name": "vortechcoin-server-node",
+  "version": "1.0.0",
+  "description": "Backend server that manages Vortech Coin transactions",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Authorises/VortechCoin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Authorises/VortechCoin/issues"
+  },
+  "homepage": "https://github.com/Authorises/VortechCoin#readme"
+}
