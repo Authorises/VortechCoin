@@ -1,11 +1,13 @@
-
-
-const {Server} = require("socket.io");
-const server = new Server(20183);
 const {v4: uuidv4} = require('uuid');
 const crypto = require('crypto');
 const { randomInt, randomBytes } = require("crypto");
 const fs = require('fs')
+
+const express = require('express');
+const {Server} = require('socket.io')
+const app = express();
+const l = app.listen(20183);
+const server = new Server(l, { cors: { origin: '*' } });
 
 const datadir = 'data/'
 
@@ -128,7 +130,6 @@ function stressTest(difficulty){
 }
 //stressTest(100);
 //console.log('Done')
-
 server.on("connection", (socket) => {
     socket.emit('devdata', a)
     console.info(`Client connected [id=${socket.id}]`);
@@ -148,7 +149,7 @@ server.on("connection", (socket) => {
             // Send wallet stats
             var responseData = new Object()
             responseData.walletsLoaded = wallets.size
-            console.log(responseData.walletsLoaded)
+            socket.emit('get-stats-response', action, responseData)
             break;
           case "security":
             // Send security stats

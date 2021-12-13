@@ -9,7 +9,11 @@ var wallet;
 //ioClient.emit('create-wallet', "password1")
 //ioClient.emit('get-balance', '9b6a2029-24d1-4336-804c-bd6ee919156e')
 //ioClient.emit('safe-shutdown', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355', 'You are under arrest')
-ioClient.emit('get-stats', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355a', 'wallets')
+ioClient.emit('get-stats', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355', 'wallets')
+
+ioClient.on('get-stats-response', (x, y) =>{
+    console.log('Get-Stats response for request: '+x+' is: '+JSON.stringify(y))
+})
 
 ioClient.on('net-shutdown', (x) => {
     console.log('Network: The main server node has been shut down for reason: '+x)
