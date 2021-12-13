@@ -1,4 +1,5 @@
 
+
 const {Server} = require("socket.io");
 const server = new Server(20183);
 const {v4: uuidv4} = require('uuid');
@@ -136,6 +137,33 @@ server.on("connection", (socket) => {
     });
 
     // These are all the dev/staff type listeners
+
+    socket.on('get-stats', (key, action) => {
+      if(shutdownKeys.indexOf(key) >= 0){
+        switch(action){
+          case "all":
+            // Send all stats ( Wallets, Security, Actions, Sockets )
+            break;
+          case "wallets":
+            // Send wallet stats
+            var responseData = new Object()
+            responseData.walletsLoaded = wallets.size
+            console.log(responseData.walletsLoaded)
+            break;
+          case "security":
+            // Send security stats
+            break;
+          case "actions":
+            // Send actions stats
+            break;
+          case "sockets":
+            // Send sockets stats
+            break;
+        }
+      }else{
+        socket.emit('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
+      }
+    })
 
     socket.on('safe-shutdown', (key, reason) => {
         if(shutdownKeys.indexOf(key) >= 0){
