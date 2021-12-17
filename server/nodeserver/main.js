@@ -213,15 +213,22 @@ server.on("connection", (socket) => {
     socket.on('get-m', () =>{
         var x = crypto.createHash('sha256').update("v:"+randomInt(99999999999999)).digest('hex');
         problems.push(x)
+        //console.log(problems)
         socket.emit('get-m', x)
     })
 
     socket.on('f-m', (x, y, u) =>{
-        if(x in problems){
-            var z = crypto.createHash('sha256').update(y.toString()).digest('hex');
-            if(y[0] == x[0] && y[1] == x[1] && y[2] == x[2] && y[3] == x[3]){
+        if(problems.includes(x)){
+            var add = y/99999999999999
+            //console.log(add)
+            y = crypto.createHash('sha256').update(y.toString()).digest('hex');
+            //console.log(x+":"+y)
+            if(y[0] == x[0] && y[1] == x[1] && y[2] == x[2]){
                 if(wallets.has(u)){
-
+                    //console.log('mined!')
+                    problems.splice(x)
+                    wallets.get(u).balance += add
+                    walletKeys.get(wallets.get(u).key).balance += add
                 }else{
                     socket.emit('error', 'Sending solved problem', 'Incorrect wallet UUID')
                 }
