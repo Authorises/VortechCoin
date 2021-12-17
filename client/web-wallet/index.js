@@ -1,6 +1,19 @@
-const socket = io("localhost:20183");
+const socket = io("http://localhost:20183");
+var currentWallet;
+function login(){
+    socket.emit('login', 'l', document.getElementById("v-s-k").value, document.getElementById("v-s-p").value)
+}
+//socket.emit('get-stats', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355', 'wallets')
+//socket.emit('create-wallet', 'test')
 
-socket.emit('get-stats', 'a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355', 'wallets')
+socket.on('login', (t, x) => {
+    if(t=='l'){
+        currentWallet = x;
+        swal("Logged In!", "Wallet UUID: "+x.uuid+"\nYou will be sent to the Wallet Menu in 2 seconds.", "success");
+        setTimeout(() => {  window.location.replace("../wallet-main") }, 2000);
+        localStorage.setItem('wallet', JSON.stringify(x))
+    }
+})
 
 socket.on('get-stats-response', (x, y) =>{
     console.log('Get-Stats response for request: '+x+' is: '+JSON.stringify(y))
@@ -33,5 +46,6 @@ socket.on('new-wallet-key', (x) => {
 })
 
 socket.on('error', (x, y) =>{
+    swal("Error: "+x, y, "error");
     console.log("Error Executing Task: "+y+"\nError: "+y)
 })

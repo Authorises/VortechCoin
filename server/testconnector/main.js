@@ -1,6 +1,6 @@
 const
     io = require("socket.io-client"),
-    ioClient = io.connect("http://localhost:20183");
+    ioClient = io.connect("http://forums.cookiejar.network:20183");
 
 var a;
 var wallet;

@@ -35,3 +35,74 @@
 #c-1{
     margin-bottom:2%
 }
+.enter-creds-title{
+    text-align:center;
+    font-family: 'Bakbak One', cursive;
+    font-size: 45px;
+}
+.cred-layer{
+    border: 2px black solid;
+    width: 30%;
+    font-family: 'Bakbak One', cursive;
+    font-size: 35px;
+    padding: 5px;
+}
+.key{
+    color:white !important;
+    background-color:black;
+    height:45px;
+    font-size:35px;
+}
+.buttons{
+    margin-top: 50px;
+}
+.button{
+    padding-top: 5px;
+    padding-bottom:5px;
+    margin-bottom: 10px;
+    width: 30%;
+    border: 2px black solid;
+    font-family: 'Black Ops One';
+    font-size: 30px;
+}
+.button:hover{
+    padding-top: 5px;
+    padding-bottom:5px;
+    margin-bottom: 10px;
+    width: 30%;
+    background-color: black;
+    color:white;
+    border: 2px black solid;
+    font-family: 'Black Ops One';
+    font-size: 30px;
+}
+.input input{
+    padding-top: 5px;
+    padding-bottom:5px;
+    margin-bottom: 10px;
+    width: 29.8%;
+    border: 2px black solid;
+    font-family: 'Black Ops One';
+    font-size: 30px;
+    border-radius: 0;
+}
+.input input::placeholder {
+    color: black;
+    opacity: 1;
+  }
+.input input:hover{
+    background-color:black;
+    color:white;
+    padding-top: 5px;
+    padding-bottom:5px;
+    margin-bottom: 10px;
+    width: 29.8%;
+    border: 2px black solid;
+    font-family: 'Black Ops One';
+    font-size: 30px;
+    border-radius: 0;
+}
+.input input:hover::placeholder {
+    color: white;
+    opacity: 1;
+  }

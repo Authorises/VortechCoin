@@ -11,16 +11,19 @@
   </head>
   <body>
 	<script src="../index.js"></script>
+    <script src="index.js"></script>
+    <script>wwm()</script>
         <!-- Do stuff! -->
   <center>
     <div id="top">Vortech | Web Wallet ( V1.0 )</div>
-    <div id="enter-creds">
-      <div id="enter-creds-title">Enter Your Wallet Credentials:</div>
-      <div class="buttons">
-        <div class="input username"> <input type="password" id="v-s-k" placeholder="Wallet Key"></div>
-        <div class="input username"> <input type="password" id="v-s-p" placeholder="Wallet Password"></div>
-        <div class="button register" onclick="login()"> LOG IN </div>
-      </div>
+    <div class="buttons">
+    <div class="enter-creds-title " id="bal">Balance: Loading...</div>
+    <div class="enter-creds-title " id="wid">Wallet ID:</div>
+      <div class="input username"> <input type="text" id="wallet-uuid" placeholder="Loading..." readonly></div>
+    <div class="enter-creds-title " id="wid">Actions:</div>
+      <div class="button register" onclick="w_trans()"> Make Transaction </div>
+      <div class="button register" onclick="reload()"> Reload </div>
+      <div class="button register" onclick="logout()"> Logout </div>
     </div>
   </center>
   </body>

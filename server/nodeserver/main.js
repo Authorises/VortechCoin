@@ -15,6 +15,12 @@ let wallets = new Map();
 let walletKeys = new Map()
 let shutdownKeys = ["49adbb0d68402a780532a1b1d146f701deba01fbef5d0e16736e1ed99a523ddd", "a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355", "6029a06d0d48a9f27372f44f6945c782abf61748198cbb9059b41aa5de325927"]
 
+function isInt(value) {
+    return !isNaN(value) && 
+           parseInt(Number(value)) == value && 
+           !isNaN(parseInt(value, 10));
+  }
+
 function loadData(){
     try {
         const data = fs.readFileSync(datadir+'wallets.txt', 'utf8')
@@ -97,6 +103,22 @@ class Wallet {
             }
         }
     }
+}
+
+function send(f, t, a){
+    console.log(f.balance)
+    console.log(t.balance)
+    f.balance -= a;
+    t.balance -= -a;
+    console.log(f.balance)
+    console.log(t.balance)
+    wallets.set(f.uuid, f)
+    wallets.set(t.uuid, t)
+    walletKeys.set(f.key, f)
+    walletKeys.set(t.key, t)
+    var transaction = new Transaction(f.uuid, t.uuid, a)
+    //t.transactions.push(transaction);
+    //f.transactions.push(transaction);
 }
 
 class Transaction{
@@ -182,6 +204,61 @@ server.on("connection", (socket) => {
     })
 
     // These are all the client/customer type listeners
+
+    socket.on('trans', (x,y,z,f) => {
+        if(x=="s1"){
+            if(walletKeys.has(y)){
+                var wal = walletKeys.get(y)
+                if(wallets.has(z)){
+                    if(wal.key!=wallets.get(z).key){
+                        socket.emit('trans', 's2', z)
+                    }else{
+                        socket.emit('error', 'Making Transaction', 'You cannot send funds to yourself.')
+                    }
+                }else{
+                    socket.emit('error', 'Making Transaction', 'Invalid Wallet Address Provided')
+                }
+            }else{
+                socket.emit('error', 'Making Transaction', 'Bad Auth')
+            }
+        }if(x=="s3"){
+            if(walletKeys.has(y)){
+                var amount = z
+                var currentWallet = walletKeys.get(y)
+                if(isInt(amount)){
+                    if(amount > 0){
+                      if(currentWallet.balance >= amount){
+                        send(currentWallet, wallets.get(f), amount)
+                        socket.emit('f-reload')
+                        socket.emit('trans', 'success', amount, y)
+                      }else{
+                        socket.emit('error', 'Making Transaction', 'You do not have sufficient funds!')
+                      }
+                    }else{
+                      socket.emit('error', 'Making Transaction', 'You must enter a positive number!')
+                    }
+                  }else{
+                    socket.emit('error', 'Making Transaction', 'You must enter a number!')
+                  }
+            }else{
+                socket.emit('error', 'Making Transaction', 'Bad Auth')
+            }
+        }
+    })
+
+    socket.on('login', (t, key, password) => {
+        console.log(t+":"+key+":"+password)
+        if(walletKeys.has(key)){
+            var x = walletKeys.get(key)
+            if(password == x.password){
+                socket.emit('login', t, x)
+            }else{
+                socket.emit('error', 'Logging In', 'Invalid Wallet Password Provided')
+            }
+        }else{
+            socket.emit('error', 'Logging In', 'Invalid Wallet Key Provided')
+        }
+    })
 
     socket.on('get-balance', (user) => {
         if(wallets.has(user)){
