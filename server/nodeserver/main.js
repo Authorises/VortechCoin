@@ -14,6 +14,7 @@ const datadir = 'data/'
 let wallets = new Map();
 let walletKeys = new Map()
 let shutdownKeys = ["49adbb0d68402a780532a1b1d146f701deba01fbef5d0e16736e1ed99a523ddd", "a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355", "6029a06d0d48a9f27372f44f6945c782abf61748198cbb9059b41aa5de325927"]
+let problems = []
 
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
@@ -211,7 +212,16 @@ server.on("connection", (socket) => {
 
     socket.on('get-m', () =>{
         var x = crypto.createHash('sha256').update("v:"+randomInt(99999999999999)).digest('hex');
-        socket.emit('get-m', x)
+        problems.push(x)
+        socket.emit('get-m', y, x)
+    })
+
+    socket.on('f-m', (x, y) =>{
+        if(problems.has(x)){
+
+        }else{
+            socket.emit('error', 'Sending solved problem', 'Specified problem does not exist.')
+        }
     })
 
     socket.on('trans', (x,y,z,f) => {
