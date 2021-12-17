@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Authorises/VortechCoin/issues"
   },
-  "homepage": "https://github.com/Authorises/VortechCoin#readme"
+  "homepage": "https://github.com/Authorises/VortechCoin#readme",
+  "dependencies": {
+    "prompt": "^1.2.0"
+  }
 }

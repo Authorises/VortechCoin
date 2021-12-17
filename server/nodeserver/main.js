@@ -213,12 +213,21 @@ server.on("connection", (socket) => {
     socket.on('get-m', () =>{
         var x = crypto.createHash('sha256').update("v:"+randomInt(99999999999999)).digest('hex');
         problems.push(x)
-        socket.emit('get-m', y, x)
+        socket.emit('get-m', x)
     })
 
-    socket.on('f-m', (x, y) =>{
-        if(problems.has(x)){
+    socket.on('f-m', (x, y, u) =>{
+        if(x in problems){
+            var z = crypto.createHash('sha256').update(y.toString()).digest('hex');
+            if(y[0] == x[0] && y[1] == x[1] && y[2] == x[2] && y[3] == x[3]){
+                if(wallets.has(u)){
 
+                }else{
+                    socket.emit('error', 'Sending solved problem', 'Incorrect wallet UUID')
+                }
+            }else{
+                socket.emit('error', 'Sending solved problem', 'Incorrect problem answer!')
+            }
         }else{
             socket.emit('error', 'Sending solved problem', 'Specified problem does not exist.')
         }
