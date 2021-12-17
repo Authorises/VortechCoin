@@ -7,10 +7,19 @@
     <title>Vortech | Web Wallet</title>
     <link rel="stylesheet" href="../index.css">
     <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   </head>
   <body>
 	<script src="../index.js"></script>
+  <script src="index.js"></script>
         <!-- Do stuff! -->
-        <div id="top">Vortech | Web Wallet ( V1.0 )</div>
+    <center>
+      <div id="top">Vortech | Web Wallet ( V1.0 )</div>
+      <div id="m">
+        <div class="enter-creds-title " id="wid">Make a wallet:</div>
+          <div class="input username"> <input type="text" id="wallet-password" placeholder="New wallet password"></div>
+          <div class="button register" onclick="createWallet()"> Finish </div>
+      </div>
+    </center>
   </body>
 </html>

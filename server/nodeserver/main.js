@@ -247,7 +247,6 @@ server.on("connection", (socket) => {
     })
 
     socket.on('login', (t, key, password) => {
-        console.log(t+":"+key+":"+password)
         if(walletKeys.has(key)){
             var x = walletKeys.get(key)
             if(password == x.password){
@@ -269,7 +268,6 @@ server.on("connection", (socket) => {
     })
     socket.on('create-wallet', (password) =>{
         var wallet = new Wallet(password);
-        wallet.setBalance(5)
         socket.emit('new-wallet-data', JSON.stringify(wallet))
         socket.emit('new-wallet-key', wallet.key)
         //console.log(walletKeys)

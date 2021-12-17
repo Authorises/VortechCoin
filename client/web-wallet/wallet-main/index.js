@@ -1,4 +1,3 @@
-console.log(localStorage)
 var currentWallet;
 
 function reload(){
