@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/Authorises/VortechCoin#readme",
   "dependencies": {
-    "socket.io-client": "^4.4.0"
+    "socket.io-client": "^4.4.1"
   }
 }
