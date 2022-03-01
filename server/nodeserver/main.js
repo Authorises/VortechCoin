@@ -10,6 +10,7 @@ const l = app.listen(20183);
 const server = new Server(l, { cors: { origin: '*' } });
 
 const datadir = 'data/'
+const miningDifficulty = 900000
 
 let wallets = new Map();
 let walletKeys = new Map()
@@ -211,7 +212,7 @@ server.on("connection", (socket) => {
     // These are all the client/customer type listeners
 
     socket.on('get-m', () =>{
-        var x = crypto.createHash('sha256').update("v:"+randomInt(99999999999999)).digest('hex');
+        var x = crypto.createHash('sha256').update("v:"+randomInt(99999999*miningDifficulty)).digest('hex');
         problems.push(x)
         //console.log(problems)
         socket.emit('get-m', x)
@@ -219,7 +220,7 @@ server.on("connection", (socket) => {
 
     socket.on('f-m', (x, y, u) =>{
         if(problems.includes(x)){
-            var add = y/99999999999999
+            var add = y/(99999999*miningDifficulty)
             //console.log(add)
             y = crypto.createHash('sha256').update(y.toString()).digest('hex');
             //console.log(x+":"+y)
