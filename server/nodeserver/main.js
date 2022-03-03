@@ -193,7 +193,7 @@ server.on("connection", (socket) => {
         socket.emit('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
       }
     })
-
+    
     socket.on('safe-shutdown', (key, reason) => {
         if(shutdownKeys.indexOf(key) >= 0){
             socket.emit('server-shutdown', 'started')
@@ -202,7 +202,8 @@ server.on("connection", (socket) => {
             saveData()
             socket.emit('server-shutdown', 'data-saved')
             console.log('Now Shutting down Node Server')
-            socket.broadcast.emit('net-shutdown', reason)
+            // I disabled net-shutdown, I think it is possible for clients to broadcast it which is NOT good.
+            // socket.broadcast.emit('net-shutdown', reason)
             exit(0);
         }else{
             socket.emit('error', 'Server Shutdown', 'Provided Authentication Key does not match server Authentication Keys.')
