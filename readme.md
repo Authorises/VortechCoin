@@ -32,6 +32,8 @@
 
 # Instructions to configure frontend: web-wallet
 
+[![Screenshot-2022-03-13-20-12-15.png](https://i.postimg.cc/N0kw4Cbc/Screenshot-2022-03-13-20-12-15.png)](https://postimg.cc/06j35fLW)
+
 #### The web-wallet is where most users will interact with the service. Of course, as the front end and the way it interacts with the backend is accessible to users, customised frontends will be made, but this is the default.
 #### The frontend code is inside of ```/client/web-wallet``` and can be ran "Out of the box", however it does still need configuration.
 
