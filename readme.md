@@ -44,6 +44,8 @@
 
 # Instructions to configure frontend: miner
 
+[![Screenshot-2022-03-13-20-10-21.png](https://i.postimg.cc/fWBRZycN/Screenshot-2022-03-13-20-10-21.png)](https://postimg.cc/23LD7z9c)
+
 #### The miner is where users will earn your currency. It is designed to act like most proof of work algorithms that work well with GPU's and you will get a similar hashrate on here to normal gpu mining, although the difficulty can be easily configured in earlier steps. Obviously as this currency is **Centralized** and not **Decentralized** there is actually no need for mining, although it makes the experience more "Realistic" and also gives users an actual way to earn it.
 
 * All you need to change for the miner, is line 3 (```    socket = io.connect("http://localhost:20183");```) to the nodeserver ip and port that you wish to use.
