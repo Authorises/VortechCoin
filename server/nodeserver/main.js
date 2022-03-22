@@ -1,32 +1,46 @@
+// Imports
 const {v4: uuidv4} = require('uuid');
 const crypto = require('crypto');
 const { randomInt, randomBytes } = require("crypto");
 const fs = require('fs')
-
+const { MongoClient } = require("mongodb");
 const express = require('express');
 const {Server} = require('socket.io')
+
+// Server stuff
 const app = express();
 const l = app.listen(20183);
 const server = new Server(l, { cors: { origin: '*' } });
 
+// Directory to store data ( for now )
 const datadir = 'data/'
+
+// Mining Difficulty. Currently at integer limit so you can only lower it. You will have to change it in miners as well.
 const miningDifficulty = 999999
 
+// Storage 
 let wallets = new Map();
 let walletKeys = new Map()
+
+// Going to be replaced with admin login system relatively soon.
 let shutdownKeys = ["49adbb0d68402a780532a1b1d146f701deba01fbef5d0e16736e1ed99a523ddd", "a82d6fc1a1a4d5c1ff9b99e39aec25046937924cc3dec06113c81e1e7b17a355", "6029a06d0d48a9f27372f44f6945c782abf61748198cbb9059b41aa5de325927"]
+
+// Temporary storage for mining problems, as they will be coming and going too fast to be used in a database.
 let problems = []
 
+// Simple random function for mining
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
   
+// Returns bool of whether value is an integer
 function isInt(value) {
     return !isNaN(value) && 
            parseInt(Number(value)) == value && 
            !isNaN(parseInt(value, 10));
   }
 
+// Load data from file, again, this .txt storage is temporary
 function loadData(){
     try {
         const data = fs.readFileSync(datadir+'wallets.txt', 'utf8')
@@ -48,7 +62,11 @@ function loadData(){
       }  
 }
 
+// Load the data
+
 loadData()
+
+// Save the data from local variables back into the text files
 
 function saveData(){
     let walletsJ = {};  
@@ -75,6 +93,8 @@ function saveData(){
         console.log('Written walletkeys.txt');
     })
 }
+
+// Class for a wallet
 
 class Wallet {
     constructor(password) {
@@ -111,6 +131,8 @@ class Wallet {
     }
 }
 
+// Function for sending funds from wallet f to wallet t
+
 function send(f, t, a){
     console.log(f.balance)
     console.log(t.balance)
@@ -127,6 +149,8 @@ function send(f, t, a){
     //f.transactions.push(transaction);
 }
 
+// Class for transactions.
+
 class Transaction{
     constructor(sender, receiver, amount) {
         this.sender = sender; 
@@ -139,8 +163,11 @@ class Transaction{
     }
 }
 
-a = new Wallet("password1")
-console.log(walletKeys)
+// Removed this line, not sure why it is here, a potential security risk.
+// console.log(walletKeys)
+
+/**
+ * Debug function to test speeds of account and transaction processing
 function stressTest(difficulty){
     var saccount = new Wallet("Test")
     var x = difficulty*1000
@@ -156,8 +183,9 @@ function stressTest(difficulty){
         }
     }
 }
-//stressTest(100);
-//console.log('Done')
+ */
+
+// initial Socket.io connection listener.
 server.on("connection", (socket) => {
     socket.emit('devdata', a)
     console.info(`Client connected [id=${socket.id}]`);
