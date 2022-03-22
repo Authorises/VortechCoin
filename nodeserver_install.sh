@@ -23,4 +23,4 @@ echo Starting configuration now.
 sleep 1
 clear
 read -p "Enter port clients should connect to : " port
-sed -i 's/20183/$port/' main.js
+sed -i 's/20183/${$port}/' main.js
