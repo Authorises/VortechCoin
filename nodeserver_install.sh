@@ -17,5 +17,11 @@ cd server
 ls
 rm -rf testconnector
 ls
+cd nodeserver
 clear
-echo Ready!
+echo Starting configuration now.
+sleep 1
+clear
+echo What port should clients connect to?
+read port
+sed -i 's/20183/$port/' main.js
