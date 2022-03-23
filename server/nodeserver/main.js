@@ -27,6 +27,8 @@ let shutdownKeys = ["49adbb0d68402a780532a1b1d146f701deba01fbef5d0e16736e1ed99a5
 
 // Temporary storage for mining problems, as they will be coming and going too fast to be used in a database.
 let problems = []
+// A list of clients that have been given a problem to stop spam-requesting problems.
+let clientsWithProblems = []
 
 // Simple random function for mining
 function getRandomArbitrary(min, max) {
@@ -134,17 +136,18 @@ class Wallet {
 // Function for sending funds from wallet f to wallet t
 
 function send(f, t, a){
-    console.log(f.balance)
-    console.log(t.balance)
+    //console.log(f.balance)
+    //console.log(t.balance)
     f.balance -= a;
     t.balance -= -a;
-    console.log(f.balance)
-    console.log(t.balance)
+    // Remove funds from f and add them to t
     wallets.set(f.uuid, f)
     wallets.set(t.uuid, t)
     walletKeys.set(f.key, f)
     walletKeys.set(t.key, t)
-    var transaction = new Transaction(f.uuid, t.uuid, a)
+    // Overwrite the new variables with updated balances.
+    
+    //var transaction = new Transaction(f.uuid, t.uuid, a)
     //t.transactions.push(transaction);
     //f.transactions.push(transaction);
 }
@@ -187,14 +190,10 @@ function stressTest(difficulty){
 
 // initial Socket.io connection listener.
 server.on("connection", (socket) => {
-    socket.emit('devdata', a)
-    console.info(`Client connected [id=${socket.id}]`);
-    socket.on("disconnect", () => {
-        console.info(`Client gone [id=${socket.id}]`);
-    });
 
     // These are all the dev/staff type listeners
 
+    /**
     socket.on('get-stats', (key, action) => {
       if(shutdownKeys.indexOf(key) >= 0){
         switch(action){
@@ -221,34 +220,33 @@ server.on("connection", (socket) => {
         socket.emit('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
       }
     })
-    
+     */
     socket.on('safe-shutdown', (key, reason) => {
         if(shutdownKeys.indexOf(key) >= 0){
-            socket.emit('server-shutdown', 'started')
+            socket.send('server-shutdown', 'started')
             console.log('Safe Shutdown!')
-            socket.emit('server-shutdown', 'saving-data')
+            socket.send('server-shutdown', 'saving-data')
             saveData()
-            socket.emit('server-shutdown', 'data-saved')
+            socket.send('server-shutdown', 'data-saved')
             console.log('Now Shutting down Node Server')
-            // I disabled net-shutdown, I think it is possible for clients to broadcast it which is NOT good.
-            // socket.broadcast.emit('net-shutdown', reason)
+            socket.broadcast.emit('net-shutdown', reason)
             exit(0);
         }else{
-            socket.emit('error', 'Server Shutdown', 'Provided Authentication Key does not match server Authentication Keys.')
+            socket.send('error', 'Server Shutdown', 'Provided Authentication Key does not match server Authentication Keys.')
         }
     })
 
     // These are all the client/customer type listeners
-
     socket.on('wallet-check', (wallet) =>{
-        socket.emit('wallet-check', wallets.has(wallet))
+        socket.send('wallet-check', wallets.has(wallet))
     })
 
+    // get a problem
     socket.on('get-m', () =>{
         var x = crypto.createHash('sha256').update("v:"+randomInt(99999999*miningDifficulty)).digest('hex');
         problems.push(x)
         //console.log(problems)
-        socket.emit('get-m', x)
+        socket.send('get-m', x)
     })
 
     socket.on('f-m', (x, y, u) =>{
@@ -262,15 +260,15 @@ server.on("connection", (socket) => {
                     problems.splice(x)
                     wallets.get(u).balance += add
                     walletKeys.get(wallets.get(u).key).balance += add
-                    socket.emit('balupdate', walletKeys.get(wallets.get(u).key).balance)
+                    socket.send('balupdate', walletKeys.get(wallets.get(u).key).balance)
                 }else{
-                    socket.emit('error', 'Sending solved problem', 'Incorrect wallet UUID')
+                    socket.send('error', 'Sending solved problem', 'Incorrect wallet UUID')
                 }
             }else{
-                socket.emit('error', 'Sending solved problem', 'Incorrect problem answer!')
+                socket.send('error', 'Sending solved problem', 'Incorrect problem answer!')
             }
         }else{
-            socket.emit('error', 'Sending solved problem', 'Specified problem does not exist.')
+            socket.send('error', 'Sending solved problem', 'Specified problem does not exist.')
         }
     })
 
@@ -280,15 +278,15 @@ server.on("connection", (socket) => {
                 var wal = walletKeys.get(y)
                 if(wallets.has(z)){
                     if(wal.key!=wallets.get(z).key){
-                        socket.emit('trans', 's2', z)
+                        socket.send('trans', 's2', z)
                     }else{
-                        socket.emit('error', 'Making Transaction', 'You cannot send funds to yourself.')
+                        socket.send('error', 'Making Transaction', 'You cannot send funds to yourself.')
                     }
                 }else{
-                    socket.emit('error', 'Making Transaction', 'Invalid Wallet Address Provided')
+                    socket.send('error', 'Making Transaction', 'Invalid Wallet Address Provided')
                 }
             }else{
-                socket.emit('error', 'Making Transaction', 'Bad Auth')
+                socket.send('error', 'Making Transaction', 'Bad Auth')
             }
         }if(x=="s3"){
             if(walletKeys.has(y)){
@@ -298,19 +296,19 @@ server.on("connection", (socket) => {
                     if(amount > 0){
                       if(currentWallet.balance >= amount){
                         send(currentWallet, wallets.get(f), amount)
-                        socket.emit('f-reload')
-                        socket.emit('trans', 'success', amount, y)
+                        socket.send('f-reload')
+                        socket.send('trans', 'success', amount, y)
                       }else{
-                        socket.emit('error', 'Making Transaction', 'You do not have sufficient funds!')
+                        socket.send('error', 'Making Transaction', 'You do not have sufficient funds!')
                       }
                     }else{
-                      socket.emit('error', 'Making Transaction', 'You must enter a positive number!')
+                      socket.send('error', 'Making Transaction', 'You must enter a positive number!')
                     }
                   }else{
-                    socket.emit('error', 'Making Transaction', 'You must enter a number!')
+                    socket.send('error', 'Making Transaction', 'You must enter a number!')
                   }
             }else{
-                socket.emit('error', 'Making Transaction', 'Bad Auth')
+                socket.send('error', 'Making Transaction', 'Bad Auth')
             }
         }
     })
@@ -319,26 +317,26 @@ server.on("connection", (socket) => {
         if(walletKeys.has(key)){
             var x = walletKeys.get(key)
             if(password == x.password){
-                socket.emit('login', t, x)
+                socket.send('login', t, x)
             }else{
-                socket.emit('error', 'Logging In', 'Invalid Wallet Password Provided')
+                socket.send('error', 'Logging In', 'Invalid Wallet Password Provided')
             }
         }else{
-            socket.emit('error', 'Logging In', 'Invalid Wallet Key Provided')
+            socket.send('error', 'Logging In', 'Invalid Wallet Key Provided')
         }
     })
 
     socket.on('get-balance', (user) => {
         if(wallets.has(user)){
-            socket.emit('get-balance-result', user, wallets.get(user).balance)
+            socket.send('get-balance-result', user, wallets.get(user).balance)
         }else{
-            socket.emit('error', 'Getting the balance of a user', 'That UUID does not exist.')
+            socket.send('error', 'Getting the balance of a user', 'That UUID does not exist.')
         }
     })
     socket.on('create-wallet', (password) =>{
         var wallet = new Wallet(password);
-        socket.emit('new-wallet-data', JSON.stringify(wallet))
-        socket.emit('new-wallet-key', wallet.key)
+        socket.send('new-wallet-data', JSON.stringify(wallet))
+        socket.send('new-wallet-key', wallet.key)
         //console.log(walletKeys)
     })
     socket.on('send-transaction', (walletKey, receiver, amount) =>{
@@ -349,15 +347,17 @@ server.on("connection", (socket) => {
             if(wallet.uuid != receiver){
                 var x = wallet.send(receiver, amount)
                 if(x){
-                    socket.emit('transaction-success', x)
+                    socket.send('transaction-success', x)
                     //console.log("============================\nTransaction Accepted\nWallet Key: "+walletKey+"\nReceiver: "+receiver+"\nAmount: "+amount+"\n============================")
                     //console.log(walletKeys)
                 }else{
-                    socket.emit('error', 'Sending Transaction', 'Invalid Amount or Receiver Entered')
+                    socket.send('error', 'Sending Transaction', 'Invalid Amount or Receiver Entered')
                 }
-            }else{return false}
+            }else{
+                socket.send('error', 'Sending Transaction', 'You cannot transfer funds to yourself.')
+            }
         }else{
-            socket.emit('error', 'Sending Transaction', 'Invalid Key Provided')
+            socket.send('error', 'Sending Transaction', 'Invalid Key Provided')
         }
     });
 });
