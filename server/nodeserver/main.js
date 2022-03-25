@@ -204,7 +204,7 @@ server.on("connection", (socket) => {
             // Send wallet stats
             var responseData = new Object()
             responseData.walletsLoaded = wallets.size
-            socket.emit('get-stats-response', action, responseData)
+            socket.send('get-stats-response', action, responseData)
             break;
           case "security":
             // Send security stats
@@ -217,7 +217,7 @@ server.on("connection", (socket) => {
             break;
         }
       }else{
-        socket.emit('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
+        socket.send('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
       }
     })
      */
