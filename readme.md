@@ -15,7 +15,7 @@
 * And obviously if you wish people to connect to it from the outside world you need an IP address.
 ## Install needed packages:
 #### You can install all the needed paclages needed for the nodeserver by running:
-```sudo npm install uuid crypto fs express socket.io```
+```sudo npm install uuid crypto fs express socket.io dotenv mongodb```
 ## Test it
 #### Now test everything is working properly by running the ```run.sh``` which starts the node server:
 #### Note: You will need to give the ```run.sh``` file permission by running ```sudo chmod u+x run.sh``` You can run the nodeserver without run.sh by running the command ```node .```, but I prefer to have a script to start it.
