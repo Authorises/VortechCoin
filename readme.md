@@ -12,7 +12,7 @@
 #### To run the Node Server you will first need the following installed:
 * NodeJS 14.17.1 or above
 * NPM 6.14.15 or above
-* And obviously if you wish people to connect to it from the outside world you need an IP address.
+* And obviously if you wish people to connect to it from the outside world you need an IP address and/or port forwarding.
 ## Install needed packages:
 #### You can install all the needed paclages needed for the nodeserver by running:
 ```sudo npm install uuid crypto fs express socket.io dotenv mongodb```
