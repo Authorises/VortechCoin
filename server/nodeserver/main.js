@@ -1,11 +1,32 @@
+// .env
+require('dotenv').config()
+
 // Imports
 const {v4: uuidv4} = require('uuid');
 const crypto = require('crypto');
 const { randomInt, randomBytes } = require("crypto");
 const fs = require('fs')
-const { MongoClient } = require("mongodb");
 const express = require('express');
 const {Server} = require('socket.io')
+
+// Mongo Client
+var MongoClient = require('mongodb').MongoClient;
+MongoClient.connect("MONGO KEY", function(err, db) {
+  if (err) throw err;
+  var database = db.db('VortechCoin')
+  global.walletsCollection = database.collection('Wallets')
+});
+
+//console.log(walletsCollection)
+
+/**
+var x = {"T":"T"}
+
+walletsCollection.insertOne(x, function(err, res) {
+  if (err) throw err;
+  console.log("1 document inserted");
+});
+*/
 
 // Server stuff
 const app = express();
@@ -204,7 +225,7 @@ server.on("connection", (socket) => {
             // Send wallet stats
             var responseData = new Object()
             responseData.walletsLoaded = wallets.size
-            socket.emit('get-stats-response', action, responseData)
+            socket.send('get-stats-response', action, responseData)
             break;
           case "security":
             // Send security stats
@@ -217,7 +238,7 @@ server.on("connection", (socket) => {
             break;
         }
       }else{
-        socket.emit('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
+        socket.send('error', 'Request of Statistics ('+action+')', 'Provided Authentication Key does not match server Authentication Keys.')
       }
     })
      */
