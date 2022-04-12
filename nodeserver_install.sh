@@ -24,3 +24,9 @@ sleep 1
 clear
 read -p "Enter port clients should connect to : " port
 sed -i 's/20183/${$port}/' main.js
+clear
+echo Installing needed nodejs packages!
+npm i uuid crypto fs express socket.io dotenv mongodb
+red -p "Enter the directory data should be stored in : " datadir
+sed -i "s/'data/'/'${$datadir}'"
+clear
